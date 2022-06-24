@@ -45,3 +45,10 @@ LOAD DATA LOCAL INPATH 'data1.csv' INTO TABLE tbl1;
     >>> Escriba su respuesta a partir de este punto <<<
 */
 
+DROP TABLE IF EXISTS result;
+
+CREATE TABLE result AS SELECT year(c4) AS y, key FROM tbl0 LATERAL VIEW explode(c5) letters AS key;
+
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT y, key, count(*) FROM result GROUP BY y, key ORDER BY y, key;
